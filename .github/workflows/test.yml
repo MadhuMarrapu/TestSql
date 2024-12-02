@@ -57,7 +57,7 @@ jobs:
           const url = context.payload.pull_request.html_url || 'No URL';
 
           await github.rest.issues.create({
-            owner: context.repo.owner,
+            owner: MadhuMarrapu,
             repo: context.repo.repo,
             title: `PR Merged: ${title}`,
             body: `This issue is to notify the team about the recent changes:\n- **Title:** ${title}\n- **URL:** ${url}`,
