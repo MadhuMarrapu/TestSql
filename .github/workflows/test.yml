@@ -47,12 +47,22 @@ jobs:
       - name: Create GitHub Issue
         uses: octokit/request-action@v2.x
         with:
-          route: POST /repos/MadhuMarrapu/TestSql/issues
-          owner: MadhuMarrapu
-          repo: TestSql
-          title: "Notification to Team"
-          body: This issue is to notify the team about the recent changes:\n- **Title:** ${context.payload.pull_request.title}\n- **URL:** ${context.payload.pull_request.html_url},
-          
+         script: |
+          const { github, context } = require('@actions/github');
+          if (!context.payload.pull_request) {
+            throw new Error('Pull request data is not available in the current event context.');
+          }
+
+          const title = context.payload.pull_request.title || 'No Title';
+          const url = context.payload.pull_request.html_url || 'No URL';
+
+          await github.rest.issues.create({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            title: `PR Merged: ${title}`,
+            body: `This issue is to notify the team about the recent changes:\n- **Title:** ${title}\n- **URL:** ${url}`,
+            labels: ['notification']
+          });
 
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
