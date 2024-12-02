@@ -46,8 +46,8 @@ jobs:
 
       - name: Create GitHub Issue
         uses: octokit/request-action@v2.x
-        with:
-         script: |
+       with: 
+           script: |
           const { github, context } = require('@actions/github');
           if (!context.payload.pull_request) {
             throw new Error('Pull request data is not available in the current event context.');
@@ -57,12 +57,13 @@ jobs:
           const url = context.payload.pull_request.html_url || 'No URL';
 
           await github.rest.issues.create({
-            owner: MadhuMarrapu,
+            owner: 'MadhuMarrapu',  # Ensure the owner name is enclosed in quotes
             repo: context.repo.repo,
             title: `PR Merged: ${title}`,
             body: `This issue is to notify the team about the recent changes:\n- **Title:** ${title}\n- **URL:** ${url}`,
             labels: ['notification']
           });
+
 
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
