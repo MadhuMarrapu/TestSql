@@ -46,8 +46,8 @@ jobs:
 
       - name: Create GitHub Issue
         uses: octokit/request-action@v2.x
-       with: 
-           script: |
+        with:
+         script: |
           const { github, context } = require('@actions/github');
           if (!context.payload.pull_request) {
             throw new Error('Pull request data is not available in the current event context.');
@@ -63,7 +63,6 @@ jobs:
             body: `This issue is to notify the team about the recent changes:\n- **Title:** ${title}\n- **URL:** ${url}`,
             labels: ['notification']
           });
-
 
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
