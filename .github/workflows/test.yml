@@ -44,15 +44,30 @@ jobs:
           echo "::set-output name=commands_found::$commands_found"
           echo "::set-output name=alert_message::$message"
 
+      # - name: Create GitHub Issue
+      #   uses: octokit/request-action@v2.x
+      #   with:
+      #     route: POST /repos/MadhuMarrapu/TestSql/issues
+      #     owner: MadhuMarrapu
+      #     repo: TestSql
+      #     title: "Notification to Team"
+      #     body: "This issue is to notify the team about the recent changes, ${{ github.event.pull_request.title }}, ${{ github.event.pull_request.html_url }}"
+          
       - name: Create GitHub Issue
+        if: ${{ env.commands_found == 'true' }}  
         uses: octokit/request-action@v2.x
         with:
           route: POST /repos/MadhuMarrapu/TestSql/issues
           owner: MadhuMarrapu
           repo: TestSql
           title: "Notification to Team"
-          body: "This issue is to notify the team about the recent changes,${{ github.event.pull_request.title }}, ${{ github.event.pull_request.html_url }}"
-          
-
+          body: |
+             "This issue is to notify the team about the recent changes:
+ 
+             - **PR Title**: ${{ github.event.pull_request.title }}
+             - **PR URL**: ${{ github.event.pull_request.html_url }}
+             - **PR Number**: #${{github.event.pull_request.number }}
+             - **Detected SQL Commands**:
+              ${{ env.alert_message }}"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
