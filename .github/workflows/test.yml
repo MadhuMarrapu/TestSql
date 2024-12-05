@@ -44,25 +44,26 @@ jobs:
           echo "::set-output name=commands_found::$commands_found"
           echo "::set-output name=alert_message::$message"
 
+      # - name: Create GitHub Issue
+      #   uses: octokit/request-action@v2.x
+      #   with:
+      #    script: |
+      #     const { github, context } = require('@actions/github');
+      #     if (!context.payload.pull_request) {
+      #       throw new Error('Pull request data is not available in the current event context.');
+      #     }
+
+      #     const title = context.payload.pull_request.title || 'No Title';
+      #     const url = context.payload.pull_request.html_url || 'No URL';
+
       - name: Create GitHub Issue
         uses: octokit/request-action@v2.x
         with:
-         script: |
-          const { github, context } = require('@actions/github');
-          if (!context.payload.pull_request) {
-            throw new Error('Pull request data is not available in the current event context.');
-          }
-
-          const title = context.payload.pull_request.title || 'No Title';
-          const url = context.payload.pull_request.html_url || 'No URL';
-
-          await github.rest.issues.create({
-            owner: 'MadhuMarrapu',  # Ensure the owner name is enclosed in quotes
-            repo: context.repo.repo,
-            title: `PR Merged: ${title}`,
-            body: `This issue is to notify the team about the recent changes:\n- **Title:** ${title}\n- **URL:** ${url}`,
-            labels: ['notification']
-          });
+          route: POST /repos/MadhuMarrapu/TestSql/issues
+          owner: MadhuMarrapu
+          repo: TestSql
+          title: "Notification to Team"
+          body: "This issue is to notify the team about the recent changes, PRTitle: ${{ github.event.pull_request.title }}, PRLink: ${{ github.event.pull_request.html_url }}"
 
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
